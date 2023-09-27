@@ -1,9 +1,9 @@
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import { useStart } from 'react' ; 
+import { UseStart } from 'react' ; 
 
 function cardcomp(props){
-let [counter , setcounter] = useStart(0)
+let [counter , setcounter] = UseStart(0)
 function addToFavorites(){
   setcounter(counter+1)
 }
