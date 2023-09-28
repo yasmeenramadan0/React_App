@@ -1,8 +1,8 @@
+import { Button } from 'react-bootstrap';
 import Card from 'react-bootstrap/Card';
 import { useState } from 'react';
 
-
-function cardcomp(props) {
+function CardComp(props) {
   const [counter, setCounter] = useState(0);
 
   function addToFavorites() {
@@ -22,5 +22,5 @@ function cardcomp(props) {
     </Card>
     )
 }
-export default cardcomp;
+export default CardComp;
 

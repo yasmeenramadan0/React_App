@@ -1,6 +1,6 @@
 import { Button } from 'react-bootstrap';
 import data from './data.json';
-import CardComponent from './card';
+import CardComp from './card';
 
 function Main() {
   return (
@@ -15,7 +15,8 @@ function Main() {
         }}
       >
         {data.map((item) => (
-          <CardComponent
+          
+          <CardComp
             image={item.image_url}
             title={item.title}
             description={item.description}
