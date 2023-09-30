@@ -3,6 +3,7 @@ import Card from 'react-bootstrap/Card';
 import { useState } from 'react';
 import Modal from 'react-bootstrap/Modal'
 
+
 function CardComp(props) {
   let [show, setShow] = useState(false);
 
@@ -11,7 +12,7 @@ function CardComp(props) {
   }
   return (
     <>
-    <Card style={{ width: '18rem' }}>
+    <Card style={{width: '18rem' }}>
       <Card.Img variant="top" src={props.image} />
       <Card.Body>
         <Card.Title>{props.title}</Card.Title>
@@ -29,9 +30,10 @@ function CardComp(props) {
         </Button>
         </Modal.Footer>
         </Modal>
-        </>
      
-    )
-}
+        </>
+        )
+    
+        
+      }
 export default CardComp;
-
