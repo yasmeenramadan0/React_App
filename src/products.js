@@ -4,79 +4,44 @@ import CardComp from "./card";
 
 function Products() {
   const [items, setItems] = useState([]);
-  const [changedValue, setChangedValue] = useState("all");
 
-  useEffect(() => {
-    getData();
-  }, []);
-
-  async function getData() {
-    const url = 'https://themealdb.p.rapidapi.com/filter.php';
-    const options = {
-      method: 'GET',
-      headers: {
-        'X-RapidAPI-Key': 'cbf102398cmsh73cabdd2421f49fp175a90jsn9f8b0cf4a716',
-        'X-RapidAPI-Host': 'themealdb.p.rapidapi.com',
-      },
-    };
-
-    try {
-      const response = await fetch(url, options);
-      const result = await response.json();
-      setItems(result.results || []); // استخدام قيمة افتراضية للمصفوفة إذا لم يتم استرجاع البيانات بشكل صحيح
-    } catch (error) {
-      console.error(error);
+  async function getMealsData() {
+    let response = await fetch('https://www.themealdb.com/api/json/v1/1/search.php?f=c') 
+    let data = await response.json();
+    setMeals(data.meals)
     }
-  }
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    const url = 'https://themealdb.p.rapidapi.com/filter.php';
-    const options = {
-      method: 'GET',
-      headers: {
-        'X-RapidAPI-Key': 'cbf102398cmsh73cabdd2421f49fp175a90jsn9f8b0cf4a716',
-        'X-RapidAPI-Host': 'themealdb.p.rapidapi.com',
-      },
-    };
 
-    try {
-      const response = await fetch(url, options);
-      const data = await response.json();
-      let filteredItems = [];
-
-      if (changedValue === "all") {
-        filteredItems = data.results || []; // استخدام قيمة افتراضية للمصفوفة إذا لم يتم استرجاع البيانات بشكل صحيح
-      } else {
-        filteredItems = data.results.filter(function (item) {
-          return item.price.value > changedValue - 10 && item.price.value <= changedValue;
-        });
+    async function showCategories() {
+      let response = await fetch('https://www.themealdb.com/api/json/v1/1/search.php?c=list') 
+      let data = await response.json();
+      setMeals(data.meals)
       }
-      setItems(filteredItems);
-    } catch (error) {
-      console.error(error);
+
+    async function handleChange(event){
+      let selectValue = event.target.value
+      let response = await fetch('https://www.themealdb.com/api/json/v1/1/search.php?c='+selectValue)
+      let data = await response.json()
+      setItems(data.meals)
     }
-  }
 
-  function handleChange(event) {
-    setChangedValue(event.target.value);
-  }
-
-  let prices = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-
+    useEffect(function(){getMealsData()
+       showCategories()
+  },[])
   return (
     <>
       <Form.Select aria-label="Default select example" onChange={handleChange}>
         <option value="all">All</option>
-        {prices.map(function (price) {
-          return <option value={price}>{price - 10}$ - {price}$</option>;
+        {categories.map(function(category){
+          return <option value={category.strCategory}>{category.strCategory} </option>
         })}
       </Form.Select>
-      <div className="container">
-        {items.length > 0 ? (
-          items.map(function (item) {
+      <div className="cardcontainer">
+        {items.length !==0? ( items.map(function (item) {
             return (
-              <CardComp image={item.images[0].baseUrl} title={item.name} price={item.price.value} />
+              <>
+              <CardComp image={item.strMealThumb} title={item.strMeal} description={item.strInstructions} />
+              </>
             );
           })
         ) : (
