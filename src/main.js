@@ -1,49 +1,91 @@
 import { Button } from 'react-bootstrap';
-import data from './data.json';
 import CardComp from './card';
 import './main.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
+import { Link, Switch, Route } from 'react-router-dom';
 
 function Main() {
-  const [items, setItems] = useState(data);
+  let [items, setItems] = useState([]);
+  let [searchedValue, setSearchedValue] = useState('');
 
-  function handleSubmit(event) {
+  async function getData() {
+    const url = 'https://themealdb.p.rapidapi.com/filter.php';
+    const options = {
+      method: 'GET',
+      headers: {
+        'X-RapidAPI-Key': 'cbf102398cmsh73cabdd2421f49fp175a90jsn9f8b0cf4a716',
+        'X-RapidAPI-Host': 'themealdb.p.rapidapi.com',
+      },
+    };
+
+    try {
+      const response = await fetch(url, options);
+      const result = await response.json();
+      setItems(result.meals);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(function () {
+    getData();
+  }, []);
+
+  async function handleSubmit(event) {
     event.preventDefault();
-    const searchedValue = event.target.search.value.toLowerCase();
-    const filteredItems = data.filter(
-      (item) => item.title.toLowerCase().indexOf(searchedValue) !== -1
-    );
-    setItems(filteredItems);
+    const url = 'https://themealdb.p.rapidapi.com/filter.php';
+    const options = {
+      method: 'GET',
+      headers: {
+        'X-RapidAPI-Key': 'cbf102398cmsh73cabdd2421f49fp175a90jsn9f8b0cf4a716',
+        'X-RapidAPI-Host': 'themealdb.p.rapidapi.com',
+      },
+    };
+
+    try {
+      const response = await fetch(url, options);
+      const data = await response.json();
+      const filteredItems = data.meals.filter(function (item) {
+        return item.strMeal.toLowerCase().includes(searchedValue.toLowerCase());
+      });
+      setItems(filteredItems);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
     <>
-      <Form className="d-flex" onSubmit={handleSubmit} id="myform">
+      <Form className="d-flex" id="myform" onSubmit={handleSubmit}>
         <Form.Control
           type="search"
           placeholder="search"
           className="me-2"
           aria-label="search"
           name="search"
+          required
+          onChange={(e) => setSearchedValue(e.target.value)}
         />
         <Button variant="outline-search" type="submit">
           Search
         </Button>
       </Form>
       <div id="container">
-        {items.length === 0 ? (
-          <p>No search results</p>
-        ) : (
+        {items && items.length > 0 ? (
           items.map((item) => (
-            <CardComp
-              key={item.id}
-              image={item.image_url}
-              title={item.title}
-              description={item.description}
-              price={item.price}
-            />
+            <div className="container" key={item.idMeal}>
+              <Link to={`/meal/${item.idMeal}`}>
+                <CardComp
+                  image={item.strMealThumb}
+                  title={item.strMeal}
+                  description={item.strInstructions}
+                />
+              </Link>
+            </div>
           ))
+        ) : (
+          <h3>No Search Results</h3>
         )}
       </div>
     </>
