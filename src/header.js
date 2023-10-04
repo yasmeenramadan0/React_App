@@ -8,7 +8,8 @@ import LogoutButton from './logout';
 import { Auth0Provider } from '@auth0/auth0-react';
 
 function Header() {
-  let {isAuthenticated} = useAuth0()
+  let {isAuthenticated, user} = useAuth0()
+  console.log(user)
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
       <Container >

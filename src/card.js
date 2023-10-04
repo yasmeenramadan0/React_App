@@ -1,49 +1,43 @@
-import Button from 'react-bootstrap/Button';
+import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
-import { useState } from 'react';
+import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import { useAuth0 } from '@auth0/auth0-react';
 
-function CardComp (props) {
+function CardComp(props) {
+  const { user } = useAuth0(); 
   let [show, setShow] = useState(false);
-
-  function handleShow(){
-    setShow(!show)
+  function handleShow() {
+    setShow(!show);
   }
 
-  function saveToLocalStorage (){
+  function saveToLocalStorage() {
+    if (localStorage.getItem("favorites")) {
+      let stringData = localStorage.getItem("favorites");
+      let arr = JSON.parse(stringData);
+      arr.push({ ...props, email: user.email }); 
+      let stringedData = JSON.stringify(arr);
 
-    if(localStorage.getItem("favorites")){
-
-    let stringData = localStorage.getItem("favorites")
-    let arr = JSON.parse(stringData);
-    arr.push(props) 
-
-    let stringedData = JSON.stringify(arr)
-
-    localStorage.setItem("favorites", stringedData)
-  }
-    else {
-
+      localStorage.setItem("favorites", stringedData);
+    } else {
       let arr = [];
-      arr.push(props)
-      let stringedData = JSON.stringify(arr)
-  
-      localStorage.setItem("favorites", stringedData)
+      arr.push(props);
+      let stringedData = JSON.stringify(arr);
 
+      localStorage.setItem("favorites", stringedData);
     }
   }
 
-
-    return(
-      <>
-        <Card style={{ width: '18rem' }}>
-        <Card.Img variant="top" src={props.image}/>
+  return (
+    <>
+      <Card style={{ width: '18rem' }}>
+        <Card.Img variant="top" src={props.image} />
         <Card.Body>
           <Card.Title>{props.title}</Card.Title>
           <Button variant="primary" onClick={handleShow}>Show Details</Button>
-          {props.showFavorites? <Button onClick={saveToLocalStorage}>Add to Favorites</Button>
-          : <Button onClick={saveToLocalStorage} style={{display:"none"}}>Add to Favorites</Button>
-          
+          {props.showFavorites ? <Button onClick={saveToLocalStorage}>Add to Favorites</Button>
+            : <Button onClick={saveToLocalStorage} style={{ display: "none" }}>Add to Favorites</Button>
+
           }
           <Button onClick={props.handleDelete}>Delete</Button>
         </Card.Body>
@@ -59,8 +53,8 @@ function CardComp (props) {
           </Button>
         </Modal.Footer>
       </Modal>
-      </>
-    )
+    </>
+  )
 }
 
 export default CardComp;
